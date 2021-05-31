@@ -1,25 +1,7 @@
-const goods = [
-	{title: 'Shirt', price: 150 },
-	{title: 'Socks', price: 50 },
-	{title: 'Jacket', price: 350 },
-	{title: 'Shoes', price: 250 },
-];
-
-const renderGoodsItem = (title = 'Default', price = 0) => `<div class='goods-item p-3 bg-light border border-warning mx-3'><h3>${title}</h3><br><p>${price}</p></div>`;
-
-const renderGoodsList = list => {
-	let goodsList = list.map(item => renderGoodsItem(item.title, item.price));
-	document.querySelector('.goods-list').innerHTML = goodsList.join(' ');
-	let json = JSON.stringify(goods);
-	console.log(typeof json);
-	let value = JSON.parse(json);
-	console.log(typeof value);
-}
-
-/*class GoodsItem {
+class GoodsItem {
 	constructor(title, price) {
-		self.title = title;
-		self.price = price;
+		this.title = title;
+		this.price = price;
 	}
 
 	makeHtmlElem() {
@@ -32,13 +14,47 @@ class GoodsList {
 		this.goods = [];
 	}
 	fetchGoods() {
-		let a = 
+		this.goods = [
+			{title: 'Shirt', price: 150 },
+			{title: 'Socks', price: 50 },
+			{title: 'Jacket', price: 350 },
+			{title: 'Shoes', price: 250 },
+		];
 	}
-}*/
+	renderToHtml() {
+		let listHtml = '';
+		this.goods.forEach(good => {
+			const goodItem = new GoodsItem(good.title, good.price);
+			listHtml += goodItem.makeHtmlElem();
+		});
+		document.querySelector('.goods-list').innerHTML = listHtml; 
+	}
+	countTotalPrice() {
+		let totalPrice = 0;
+		this.goods.forEach(good => {
+			totalPrice += good.price;
+		})
+		let goodsElem = document.querySelector('.goods-list');
+		goodsElem.insertAdjacentHTML('afterend', `<p>Общая стоимость товаров ${totalPrice}`);  
+	}
+}
+
+class GoodsItemInBasket extends GoodsItem {
+
+}
+
+class GoodsListInBasket extends GoodsList {
+
+}
+
+
 
 
 const init = () => {
-	renderGoodsList(goods);
+	const goodsObj = new GoodsList();
+	goodsObj.fetchGoods();
+	goodsObj.renderToHtml();
+	goodsObj.countTotalPrice(); 
 }
 
 window.onload = init;
