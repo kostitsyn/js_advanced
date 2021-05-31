@@ -10,7 +10,32 @@ const renderGoodsItem = (title = 'Default', price = 0) => `<div class='goods-ite
 const renderGoodsList = list => {
 	let goodsList = list.map(item => renderGoodsItem(item.title, item.price));
 	document.querySelector('.goods-list').innerHTML = goodsList.join(' ');
+	let json = JSON.stringify(goods);
+	console.log(typeof json);
+	let value = JSON.parse(json);
+	console.log(typeof value);
 }
+
+/*class GoodsItem {
+	constructor(title, price) {
+		self.title = title;
+		self.price = price;
+	}
+
+	makeHtmlElem() {
+		return `<div class='goods-item p-3 bg-light border-warning mx-3'><h3>${this.title}</h3><p>${this.price}</p></div>`;
+	}
+}
+
+class GoodsList {
+	constructor() {
+		this.goods = [];
+	}
+	fetchGoods() {
+		let a = 
+	}
+}*/
+
 
 const init = () => {
 	renderGoodsList(goods);
