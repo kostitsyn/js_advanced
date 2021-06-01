@@ -1,3 +1,12 @@
+// Пропишем константы чтобы уйти от хардкода
+const bigSize = 'big';
+const smallSize = 'small';
+const cheeseStuffing = 'cheese';
+const saladStuffing = 'salad';
+const potatoStuffing = 'potato';
+const spiceTopping = 'spice';
+const mayoTopping = 'mayo';  
+
 class Hamburger {
 	constructor(size, stuffing) {
 		this.sizeType = {
@@ -85,9 +94,9 @@ class Hamburger {
 	 */
 	getToppings() {
 		let toppingsList = this.toppings.map(function(topping) {
-			if (topping == 'spice') {
+			if (topping == spiceTopping) {
 				return 'специи';
-			}else if (topping == 'mayo') {
+			}else if (topping == mayoTopping) {
 				return 'майонез';
 			}
 		})
@@ -99,7 +108,7 @@ class Hamburger {
 	 * @return {string} Размер гамбургера.
 	 */
 	getSize() {
-		return this._size == 'big' ? 'большой': 'маленький';
+		return this._size == bigSize ? 'большой': 'маленький';
 	}
 
 	/**
@@ -109,13 +118,13 @@ class Hamburger {
 	getStuffing() {
 		let stuffing = '';
 		switch (this._stuffing) {
-			case 'cheese':
+			case cheeseStuffing:
 				stuffing = 'сырную';
 				break;
-			case 'salad':
+			case saladStuffing:
 			 	stuffing = 'салатную';
 			 	break;
-			case 'potato':
+			case potatoStuffing:
 				stuffing = 'картофельную';
 				break;
 		}
@@ -152,15 +161,6 @@ class Hamburger {
 
 	
 }
-
-// Пропишем константы чтобы уйти от хардкода
-const bigSize = 'big';
-const smallSize = 'small';
-const cheeseStuffing = 'cheese';
-const saladStuffing = 'salad';
-const potatoStuffing = 'potato';
-const spiceTopping = 'spice';
-const mayoTopping = 'mayo';  
 
 let size;
 while (true) {
