@@ -39,16 +39,13 @@ class GoodsList {
 	}
 }
 
-class GoodsItemInBasket extends GoodsItem {
+class BasketItem {
 
 }
 
-class GoodsListInBasket extends GoodsList {
+class BasketList {
 
 }
-
-
-
 
 const init = () => {
 	const goodsObj = new GoodsList();

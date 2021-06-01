@@ -1,4 +1,3 @@
-'use strict';
 class Hamburger {
 	constructor(size, stuffing) {
 		this.sizeType = {
@@ -20,6 +19,8 @@ class Hamburger {
 		this.toppings = [];
 			
 	}
+
+	// Сначала прописал валидацию в классе, потом в клиентском коде, не знаю, где лучше её прописывать.
 
 	validateSize(size) {
 		if (!(size in this.sizeType)) {
@@ -74,7 +75,7 @@ class Hamburger {
 		if (!(topping in this.toppings)) {
 			alert(`Приправа ${topping} отстутствует для данного гамбургера!`);
 		}else {
-			this.topping.pop(topping);
+			this.toppings.pop(topping);
 		}
 	}
 
@@ -83,7 +84,14 @@ class Hamburger {
 	 * @return {string} Строка с названиями приправ.
 	 */
 	getToppings() {
-		return this.topping.join(' ');
+		let toppingsList = this.toppings.map(function(topping) {
+			if (topping == 'spice') {
+				return 'специи';
+			}else if (topping == 'mayo') {
+				return 'майонез';
+			}
+		})
+		return toppingsList.join(', ');
 	}
 
 	/**
@@ -91,7 +99,7 @@ class Hamburger {
 	 * @return {string} Размер гамбургера.
 	 */
 	getSize() {
-		return this._size;
+		return this._size == 'big' ? 'большой': 'маленький';
 	}
 
 	/**
@@ -99,7 +107,19 @@ class Hamburger {
 	 * @return {string} Начинка гамбургера.
 	 */
 	getStuffing() {
-		return this._stuffing;
+		let stuffing = '';
+		switch (this._stuffing) {
+			case 'cheese':
+				stuffing = 'сырную';
+				break;
+			case 'salad':
+			 	stuffing = 'салатную';
+			 	break;
+			case 'potato':
+				stuffing = 'картофельную';
+				break;
+		}
+		return stuffing;
 	}
 
 	/**
@@ -133,6 +153,15 @@ class Hamburger {
 	
 }
 
+// Пропишем константы чтобы уйти от хардкода
+const bigSize = 'big';
+const smallSize = 'small';
+const cheeseStuffing = 'cheese';
+const saladStuffing = 'salad';
+const potatoStuffing = 'potato';
+const spiceTopping = 'spice';
+const mayoTopping = 'mayo';  
+
 let size;
 while (true) {
 	size = prompt('Укажите размер гамбургера:\nб-большой\nм-маленький').toLowerCase();
@@ -142,34 +171,61 @@ while (true) {
 }
 switch(size) {
 	case 'б':
-		size = 'big';
+		size = bigSize;
 		break;
 	case 'м':
-		size = 'small';
+		size = smallSize;
 		break;
 }
 
 let stuffing;
 while (true) {
 	stuffing = prompt('Укажите начинку:\n1-сыр\n2-салат\n3-картофель');
-	if (stuffing of ['1', '2', '3']) {
+	if (['1', '2', '3'].includes(stuffing)) {
 		break;
 	}
 }
+switch(stuffing) {
+	case '1':
+		stuffing = cheeseStuffing;
+		break;
+	case '2':
+		stuffing = saladStuffing;
+		break;
+	case '3':
+		stuffing = potatoStuffing;
+		break;
+}
 
-const smallHamburger = new Hamburger(size, 'cheese');
+const hamburgerObj = new Hamburger(size, stuffing);
 
-// Добавляем ему специи 
-smallHamburger.addTopping('spice');
-smallHamburger.addTopping('mayo');
-console.log(`Цена маленького гамбургера ${smallHamburger.calculatePrice()}р.
-	\nЕго калорийность ${smallHamburger.calculateCalories()}`);
+let toppingsArr;
+while (true) {
+	toppingsArr = prompt('По желанию, укажите через пробел добавляемые специи:\n1-приправа\n2-майонез').split(' ');
+	if (toppingsArr[0] == '') {
+		break;
+	}
+	if (toppingsArr.length === 1 && (toppingsArr.includes('1') || toppingsArr.includes('2'))) {
+		break;
+	}
+	if(toppingsArr.length === 2 && toppingsArr.includes('1') && toppingsArr.includes('2')) {
+		break;
+	}	
+}
 
+for(let toppingNum of toppingsArr) {
+	switch (toppingNum) {
+		case '1':
+			hamburgerObj.addTopping(spiceTopping);
+			break;
+		case '2':
+			hamburgerObj.addTopping(mayoTopping);
+			break;
+	}	
+}
 
-// Создаём объект большой гамбургер
-const bigHamburger = new Hamburger('big', 'potato');
-
-// Добавляем ему специи 
-bigHamburger.addTopping('mayo');
-console.log(`Цена большого гамбургера ${bigHamburger.calculatePrice()}р.
-	\nЕго калорийность ${bigHamburger.calculateCalories()}`);
+alert(`Приготовлен ${hamburgerObj.getSize()} гамбургер
+	c добавками: ${hamburgerObj.getToppings()}.
+	Гамбургер содержит ${hamburgerObj.getStuffing()} начинку.
+	Цена гамбургера: ${hamburgerObj.calculatePrice()}р,
+	калорийность ${hamburgerObj.calculateCalories()} калорий.`);
