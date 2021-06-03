@@ -84,7 +84,8 @@ class Hamburger {
 		if (!(topping in this.toppings)) {
 			alert(`Приправа ${topping} отстутствует для данного гамбургера!`);
 		}else {
-			this.toppings.pop(topping);
+			const index = this.toppings.indexof(topping);
+			this.toppings.splice(index, 1);
 		}
 	}
 
@@ -163,6 +164,106 @@ class Hamburger {
 }
 
 let size;
+let stuffing;
+document.body.insertAdjacentHTML('afterbegin', `<form id="data">
+													<p><b>Выберите размер гамбургера:</b></p>
+													<p><input type="radio" name="size" value=${smallSize}>Маленький гамбургер</p>
+													<p><input type="radio" name="size" value=${bigSize}>Большой гамбургер</p>
+													<br>
+													<p><b>Выберите начинку гамбургера:</b></p>
+													<p><input type="radio" name="stuffing" value=${cheeseStuffing}>Сыр</p>
+													<p><input type="radio" name="stuffing" value=${saladStuffing}>Салат</p>
+													<p><input type="radio" name="stuffing" value=${potatoStuffing}>Картофель</p>
+													<br>
+													<p><b>Выберите специи:</b></p>
+													<p><input type="checkbox" name="toppings" value=${spiceTopping}>Специи</p>
+													<p><input type="checkbox" name="toppings" value=${mayoTopping}>Майонез</p>	
+												</form>
+												<button name="create-burger">Посчитать</button>
+												<p class='info'></p>`);
+
+let createBurgerBtn = document.querySelector('button[name=create-burger]');
+
+createBurgerBtn.addEventListener('click', event => {
+	let typesSizeElem = document.getElementsByName('size');
+	let infoElem = document.querySelector('.info');
+	typesSizeElem.forEach(typeItem => {
+		if (typeItem.checked) {
+			size = typeItem.value;
+		}
+	})
+
+	let stuffingsElem = document.getElementsByName('stuffing');
+	stuffingsElem.forEach(stuffingItem => {
+		if (stuffingItem.checked) {
+			stuffing = stuffingItem.value;
+		}
+	})
+
+	const hamburgerObj = new Hamburger(size, stuffing);
+
+	let toppingsElem = document.getElementsByName('toppings');
+	toppingsElem.forEach(toppingItem => {
+		if (toppingItem.checked) {
+			hamburgerObj.addTopping(toppingItem.value);
+		}
+	})
+	infoElem.innerText = `Приготовлен ${hamburgerObj.getSize()} гамбургер
+	${hamburgerObj.getToppings() ? `c добавками: ${hamburgerObj.getToppings()}.`: "без добавок"}
+	Гамбургер содержит ${hamburgerObj.getStuffing()} начинку.
+	Цена гамбургера: ${hamburgerObj.calculatePrice()}р,
+	калорийность ${hamburgerObj.calculateCalories()} калорий.`
+
+	if (hamburgerObj.getToppings()) {
+	infoElem.insertAdjacentHTML('afterend', `<p><b>Удалить специи:</b></p>
+											 ${for (spam of hamburgerObj.getToppings().split(', ')) {
+											 	`123`
+											 }}`);
+	}
+})
+	
+
+
+/*let startButton = document.getElementsByName('start-button')[0];
+startButton.addEventListener('click', (event) => {
+	event.target.style.display = 'none';
+	document.body.insertAdjacentHTML('afterbegin', `<div class="select-size"><p>Выберите размер гамбургера:</p>
+													<button name="small-hamburger">Маленький гамбургер</button>
+													<button name="big-hamburger">Большой гамбургер</button></div>`);
+
+	let selectSizeElem = document.querySelector('.select-size');
+	selectSizeElem.addEventListener('click', (event) => {
+		if (event.target.name === 'small-hamburger') {
+			size = 'small';
+		}else {
+			size = 'big';
+		}
+		selectSizeElem.style.display = 'none';
+		document.body.insertAdjacentHTML('afterbegin', `<div class="select-stuffing"><p>Укажите начинку:</p>
+													<button name="cheese">Сыр</button>
+													<button name="salad">Салат</button>
+													<button name="potato">Картофель</button></div>`);
+
+		let selectStuffingElem = document.querySelector('.select-stuffing');
+		selectStuffingElem.addEventListener('click', (event) => {
+			if (event.target.name === 'cheese') {
+				stuffing = 'cheese';
+			}else if (event.target.name === 'salad') {
+				stuffing = 'salad';
+			} else {
+				stuffing = 'potato';
+			}
+			selectStuffingElem.style.display = 'none';
+
+			const hamburgerObj = new Hamburger(size, stuffing);
+		})
+
+	})
+})*/
+
+
+
+/*let size;
 while (true) {
 	size = prompt('Укажите размер гамбургера:\nб-большой\nм-маленький').toLowerCase();
 	if (size == 'б' || size == 'м') {
@@ -228,4 +329,4 @@ alert(`Приготовлен ${hamburgerObj.getSize()} гамбургер
 	c добавками: ${hamburgerObj.getToppings()}.
 	Гамбургер содержит ${hamburgerObj.getStuffing()} начинку.
 	Цена гамбургера: ${hamburgerObj.calculatePrice()}р,
-	калорийность ${hamburgerObj.calculateCalories()} калорий.`);
+	калорийность ${hamburgerObj.calculateCalories()} калорий.`);*/
