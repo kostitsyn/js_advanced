@@ -8,13 +8,13 @@ class GoodsItem {
 
 	/**
 	 * Сгенерировать блок товара для отображения на странице.
-	 * @return {string} Блок товара в строковом предствалении.
+	 * @return {string} Блок товара в строковом представлении.
 	 */
 	makeHtmlElem() {
-		return `<div class='goods-item p-3 bg-light border-warning mx-3'>
-					<h3>${this.product_name}</h3>
-					<p>${this.price}</p>
-					<button name=${this.id_product} class="btn btn-danger btn-sm">В корзину</button>
+		return `<div class='goods-item p-3 bg-light border-warning mx-3 animated'>
+					<h3 class='goods-name'>${this.product_name}</h3>
+					<p class='goods-price'>${this.price}</p>
+					<button name=${this.id_product} class="btn btn-danger btn-sm add-basket-btn">В корзину</button>
 				</div>`;
 	}
 }
@@ -43,9 +43,9 @@ class GoodsList {
 	 */
 	renderToHtml() {
 		let listHtml = '';
-		this.goods.forEach(good => {
-			const goodItem = new GoodsItem(good.id_product, good.product_name, good.price);
-			listHtml += goodItem.makeHtmlElem();
+		this.goods.forEach(product => {
+			const productItem = new GoodsItem(product.id_product, product.product_name, product.price);
+			listHtml += productItem.makeHtmlElem();
 		});
 		document.querySelector('.goods-list').innerHTML = listHtml; 
 	}
@@ -55,8 +55,8 @@ class GoodsList {
 	 */
 	countTotalPrice() {
 		let totalPrice = 0;
-		this.goods.forEach(good => {
-			totalPrice += good.price;
+		this.goods.forEach(product => {
+			totalPrice += product.price;
 		})
 		let goodsElem = document.querySelector('.goods-list');
 		goodsElem.insertAdjacentHTML('afterend', `<p>Общая стоимость товаров ${totalPrice}</p>`);  
@@ -69,6 +69,10 @@ class GoodsList {
 	getAllGoods() {
 		return this.goods;
 	}
+
+	getElementById(productId) {
+		return this.goods.find(product => product.id_product == productId);
+	}
 }
 
 class BasketItem {
@@ -76,6 +80,24 @@ class BasketItem {
 		this.product = product;
 		this.quantity = quantity;
 		this.add_datetime = new Date();  
+	}
+
+	/**
+	 * Сгенерировать блок товара для отображения на странице корзины.
+	 * @return {string} Блок товара в строковом представлении.
+	 */
+	makeHtmlElem() {
+		return `<div class='goods-item'>
+					<h3 class='goods-name'>${this.product.product_name}</h3>
+					<p class='goods-price'>Цена: ${this.product.price * this.quantity}</p>
+					<p class='goods-price'>Количество: ${this.quantity}</p>
+					<input type="number" value=${this.quantity}>
+					<button name=${this.product.id_product} class="btn btn-danger btn-sm remove-basket-btn">Удалить</button>
+				</div>`;
+	}
+
+	updateQuantity(quantity) {
+
 	}
 }
 
@@ -118,9 +140,38 @@ class BasketList {
 		return this.goodsArr;
 	}
 
+	/**
+	 * Отрисовать на странице корзины блоки с товарами.
+	 */
+	renderToHtml() {
+		let listHtml = '';
+		this.goodsArr.forEach(basketProduct => {
+			/*const goodItem = new GoodsItem(basketProduct.product, good.product_name, good.price);*/
+			listHtml += basketProduct.makeHtmlElem();
+		});
+		document.querySelector('.modal-body').innerHTML = listHtml; 
+	}
+
+	getElementById(productId) {
+		return this.goodsArr.find(basketProduct => basketProduct.product.id_product == productId);
+	}
 }
 
+
+let loadIcon = document.createElement('i');
+	loadIcon.classList.add('fas', 'fa-spinner', 'fa-spin');
+	document.querySelector('.main-container').insertAdjacentElement('afterbegin', loadIcon);
+
+	window.addEventListener('load', event => {
+		loadIcon.style.display = 'none';
+	})
+
 const init = async () => {
+
+	/*let mainContainerEl = document.querySelector('.main-container');*/
+
+	
+
 	const goodsObj = new GoodsList;
 	await goodsObj.fetchGoods();
 	goodsObj.renderToHtml();
@@ -128,17 +179,41 @@ const init = async () => {
 
 	const basketListObj = new BasketList;
 
-	let goodsListElem = document.querySelector('.goods-list');
-	goodsListElem.addEventListener('click', event => {
-		if (event.target.tagName === 'BUTTON') {
-			const productItem = goodsObj.getAllGoods().find(product => product.id_product == event.target.name);
+	let addBasketBtns = document.querySelectorAll('.add-basket-btn');
+	addBasketBtns.forEach(btn => {
+		btn.addEventListener('click', event => {
+			const productItem = goodsObj.getElementById(event.target.name);
 			basketListObj.addProduct(productItem);
-		}
-		
+		})
 	})
 
-	let basketButton = document.querySelector('button[name=basket-btn]');
-	console.log(basketButton); 
+
+	let basketButton = document.getElementsByName('basket-btn')[0];
+	basketButton.addEventListener('click', event => {
+		basketListObj.renderToHtml();
+
+		let removeBasketBtns = document.querySelectorAll('.remove-basket-btn');
+		removeBasketBtns.forEach(btn => {
+			btn.addEventListener('click', event => {
+				const productItem = basketListObj.getElementById(event.target.name);
+				basketListObj.removeProduct(productItem);
+				basketListObj.renderToHtml();
+			})
+		})
+	})
+
+
+
+	let goodsListElems = document.querySelectorAll('.goods-item');
+	goodsListElems.forEach(el => {
+		el.addEventListener('mouseover', event => {
+			event.target.classList.add('pulse');
+		})
+
+		el.addEventListener('mouseout', event => {
+			event.target.classList.remove('pulse');
+		})
+	})
 }
 
 window.onload = init;
