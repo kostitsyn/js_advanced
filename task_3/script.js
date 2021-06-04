@@ -81,11 +81,10 @@ class Hamburger {
 	 * @param  {string} topping Название приправы.
 	 */
 	removeTopping(topping) {
-		if (!(topping in this.toppings)) {
+		if (!(this.toppings.includes(topping))) {
 			alert(`Приправа ${topping} отстутствует для данного гамбургера!`);
 		}else {
-			const index = this.toppings.indexof(topping);
-			this.toppings.splice(index, 1);
+			this.toppings.splice(this.toppings.indexOf(topping), 1);
 		}
 	}
 
@@ -208,18 +207,44 @@ createBurgerBtn.addEventListener('click', event => {
 			hamburgerObj.addTopping(toppingItem.value);
 		}
 	})
-	infoElem.innerText = `Приготовлен ${hamburgerObj.getSize()} гамбургер
-	${hamburgerObj.getToppings() ? `c добавками: ${hamburgerObj.getToppings()}.`: "без добавок"}
-	Гамбургер содержит ${hamburgerObj.getStuffing()} начинку.
-	Цена гамбургера: ${hamburgerObj.calculatePrice()}р,
-	калорийность ${hamburgerObj.calculateCalories()} калорий.`
+
+	renderInfoText();
+
+	function renderInfoText() {
+
+		infoElem.innerText = `Приготовлен ${hamburgerObj.getSize()} гамбургер
+		${hamburgerObj.getToppings() ? `c добавками: ${hamburgerObj.getToppings()}.`: "без добавок"}
+		Гамбургер содержит ${hamburgerObj.getStuffing()} начинку.
+		Цена гамбургера: ${hamburgerObj.calculatePrice()}р,
+		калорийность ${hamburgerObj.calculateCalories()} калорий.`
+	}
+
+	function showSecectedToppings(toppingsArr) {
+		let result = '';
+		for (egg of toppingsArr) {
+			result += `<p><input type="checkbox" name="remove-toppings" value=${egg == 'специи' ? spiceTopping : mayoTopping}>${egg}</p>`;
+		}
+		return result;
+	}
 
 	if (hamburgerObj.getToppings()) {
-	infoElem.insertAdjacentHTML('afterend', `<p><b>Удалить специи:</b></p>
-											 ${for (spam of hamburgerObj.getToppings().split(', ')) {
-											 	`123`
-											 }}`);
+	infoElem.insertAdjacentHTML('afterend', `<div class="remove-div"><p><b>Удалить специи:</b></p>
+											 ${showSecectedToppings(hamburgerObj.getToppings().split(', '))}
+											 </div>`
+								);
 	}
+
+	let removeToppingsElem = document.querySelector('.remove-div');
+	removeToppingsElem.addEventListener('click', event => {
+		if (event.target.tagName == "INPUT") {
+			if (event.target.checked) {
+				hamburgerObj.removeTopping(event.target.value);
+			}else {
+				hamburgerObj.addTopping(event.target.value);
+			}
+			renderInfoText();
+		}
+	})
 })
 	
 
