@@ -253,7 +253,14 @@ const init = async () => {
 		basketItemInputs.forEach(inputItem => {
 			inputItem.addEventListener('change', event => {
 				const basketItem = basketListObj.getElementById(event.target.name);
-				basketItem.updateQuantity(+event.target.value);
+				let currentQuantity = +event.target.value;
+				if (currentQuantity <= 0) {
+					basketListObj.removeProduct(basketItem);
+					let basketItemElem = event.target.parentNode;
+					basketItemElem.style.display = 'none';
+				}else {
+					basketItem.updateQuantity(+event.target.value);
+				}
 				event.path[1].querySelector('.basket-product-price').innerText = basketItem.getTotalPriceForItem();
 				event.currentTarget.parentNode.querySelector('.basket-total-price').innerText = basketListObj.getTotalPrice();
 			})
