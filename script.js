@@ -1,4 +1,3 @@
-
 class GoodsItem {
 	constructor(id_product, product_name, price) {
 		this.id_product = id_product;
@@ -20,9 +19,11 @@ class GoodsItem {
 	}
 }
 
+
 class GoodsList {
 	constructor() {
 		this.goods = [];
+		this.filteredGoods = [];
 	}
 
 	/**
@@ -34,6 +35,7 @@ class GoodsList {
 		if (response.ok) {
 			const catalogItems = await response.json();
 			this.goods = catalogItems;
+			this.filteredGoods = catalogItems;
 		} else {
 			alert('Ошибка соединения с сервером');
 		}
@@ -44,23 +46,24 @@ class GoodsList {
 	 */
 	renderToHtml() {
 		let listHtml = '';
-		this.goods.forEach(product => {
+		this.filteredGoods.forEach(product => {
 			const productItem = new GoodsItem(product.id_product, product.product_name, product.price);
 			listHtml += productItem.makeHtmlElem();
 		});
-		document.querySelector('.goods-list').innerHTML = listHtml; 
+		document.querySelector('.goods-list').innerHTML = listHtml + `${this.goods.length ? 
+															`<br><p class="goods-total-price">${this.getTotalPrice()}</p>`
+															 : ''}`;
 	}
 
 	/**
 	 * Вычислить общую стоимость товаров.
 	 */
-	countTotalPrice() {
+	getTotalPrice() {
 		let totalPrice = 0;
-		this.goods.forEach(product => {
+		this.filteredGoods.forEach(product => {
 			totalPrice += product.price;
 		})
-		let goodsElem = document.querySelector('.goods-list');
-		goodsElem.insertAdjacentHTML('afterend', `<p>Общая стоимость товаров ${totalPrice}</p>`);  
+		return `Общая стоимость товаров: ${totalPrice}`;
 	}
 
 	/**
@@ -72,14 +75,32 @@ class GoodsList {
 	}
 
 	/**
+	 * Получить список отфильтрованных товаров.
+	 * @return {object} Массив отфильтрованных товаров.
+	 */
+	getFilteredGoods() {
+		return this.filteredGoods;
+	}
+
+	/**
 	 * Получить объект товара по его id.
 	 * @param  {integer} productId Id товара.
 	 * @return {object}  Объект товара.
 	 */
 	getElementById(productId) {
-		return this.goods.find(product => product.id_product == productId);
+		return this.filteredGoods.find(product => product.id_product == productId);
+	}
+
+	/**
+	 * Отфильтровать массив товаров по переданному значению.
+	 * @param  {string} value Название строки по которой будет происходить фильтрация.
+	 */
+	filterGoods(value) {
+		let regexp = new RegExp(value, 'i');
+		this.filteredGoods = this.goods.filter(product => regexp.test(product.product_name));
 	}
 }
+
 
 class BasketItem {
 	constructor(product, quantity) {
@@ -118,6 +139,7 @@ class BasketItem {
 		this.quantity = quantity;
 	}
 }
+
 
 class BasketList {
 	constructor() {
@@ -216,7 +238,6 @@ const init = async () => {
 	const goodsObj = new GoodsList;
 	await goodsObj.fetchGoods();
 	goodsObj.renderToHtml();
-	goodsObj.countTotalPrice();
 
 	const basketListObj = new BasketList;
 
@@ -227,7 +248,6 @@ const init = async () => {
 			basketListObj.addProduct(productItem);
 		})
 	})
-
 
 	let basketButton = document.getElementsByName('basket-btn')[0];
 	basketButton.addEventListener('click', event => {
@@ -253,14 +273,63 @@ const init = async () => {
 		basketItemInputs.forEach(inputItem => {
 			inputItem.addEventListener('change', event => {
 				const basketItem = basketListObj.getElementById(event.target.name);
-				basketItem.updateQuantity(+event.target.value);
+				let currentQuantity = +event.target.value;
+				if (currentQuantity <= 0) {
+					basketListObj.removeProduct(basketItem);
+					let basketItemElem = event.target.parentNode;
+					basketItemElem.style.display = 'none';
+				}else {
+					basketItem.updateQuantity(+event.target.value);
+				}
 				event.path[1].querySelector('.basket-product-price').innerText = basketItem.getTotalPriceForItem();
 				event.currentTarget.parentNode.querySelector('.basket-total-price').innerText = basketListObj.getTotalPrice();
 			})
 		})
 	})
 
+	let searchBtnElem = document.querySelector('.search-btn');
+	searchBtnElem.addEventListener('click', event => {
+		let goodsListElems = document.querySelectorAll('.goods-item');
+		goodsListElems.forEach(el => {
+			el.style.display = 'block';
+		})
+		let value = searchBtnElem.parentNode.querySelector('.search-field').value;
+		goodsObj.filterGoods(value);
+		let filteredGoods = goodsObj.getFilteredGoods();
+		
+		goodsListElems.forEach(el => {
+			let isExists = filteredGoods.find(product => product.id_product === +el.querySelector('.add-basket-btn').name);
+			if (!isExists) {
+				el.style.display = 'none';
+			}
+		})
+		document.querySelector('.goods-total-price').innerHTML = goodsObj.getTotalPrice();
 
+	})
+
+	let searchFieldElem = document.querySelector('.search-field');
+	searchFieldElem.addEventListener('keydown', event => {
+		if (event.key === 'Enter') {
+			let goodsListElems = document.querySelectorAll('.goods-item');
+			goodsListElems.forEach(el => {
+				el.style.display = 'block';
+			})
+
+			let value = event.target.value;
+			goodsObj.filterGoods(value);
+			let filteredGoods = goodsObj.getFilteredGoods();
+		
+			goodsListElems.forEach(el => {
+				let isExists = filteredGoods.find(product => product.id_product === +el.querySelector('.add-basket-btn').name);
+				if (!isExists) {
+					el.style.display = 'none';
+				}
+			})
+		document.querySelector('.goods-total-price').innerHTML = goodsObj.getTotalPrice();
+			event.preventDefault();
+		}
+		
+	})
 
 	let goodsListElems = document.querySelectorAll('.goods-item');
 	goodsListElems.forEach(el => {
