@@ -77,12 +77,13 @@
 			      <div class="modal-body basket-list" v-for="product in basketGoods">
 			      	<div class='basket-item'>
 						<h3 class='basket-product-name'>{{ product.product_name }}</h3>
-						<!-- <p class='basket-product-price'>{{ getTotalPriceForItem() }}</p> -->
+						<p class='basket-product-price'>{{ getTotalPriceForItem(product) }}</p>
 						<p class='basket-product-quantity'>Количество:</p>
-						<input name=${this.product.id_product} type="number" value=${this.quantity}><br><br>
-						<button v-bind:name="product.id_product" class="btn btn-danger btn-sm remove-basket-btn" @click="removeProductInBasket">Удалить</button>
+						<input v-bind:name="product.id_product" type="number" v-bind:value="product.quantity" @change="updateQuantity"><br><br>
+						<button v-bind:name=product.id_product class="btn btn-danger btn-sm remove-basket-btn" @click="removeProductInBasket">Удалить</button>
 					</div>
 			      </div>
+			      <p class="basket-total-price">{{ getTotalPriceInBasket() }}</p>
 			      <div class="modal-footer">
 			        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
 			      </div>
@@ -110,11 +111,13 @@
 					<div class="basket-list row-cols-lg-5 d-flex justify-content-center flex-wrap">
 						<div class='basket-item p-3 bg-light border-warning mx-3 animated' v-for="product in basketGoods" @mouseover="mouseOver" @mouseout="mouseOut">
 							<h3 class='goods-name'>{{ product.product_name }}</h3>
-							<p class='goods-price'>{{ product.price }}</p>
+							<p class='goods-price'>{{ getTotalPriceForItem(product) }}</p>
+							<p class='basket-product-quantity'>Количество:</p>
+							<input class="mb-3 d-block" v-bind:name="product.id_product" type="number" v-bind:value="product.quantity" @change="updateQuantity">
 							<button v-bind:name="product.id_product" class="btn btn-danger btn-sm remove-basket-btn" @click="removeProductInBasket">Удалить</button>
 						</div>
 					</div>
-					<p class="position-static goods-total-price text-center">{{ getTotalBasketPrice() }}</p>
+					<p class="position-static goods-total-price text-center">{{ getTotalPriceInBasket() }}</p>
 				</div>
 			</main>
 		</div>

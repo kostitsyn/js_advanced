@@ -36,16 +36,17 @@ const app = new Vue({
 		},
 
 		/**
-		 * Получить общую стоимость товаров в корзине.
-		 * @return {string} Строка с общей стоимостью товаров в корзине.
+		 * Вычислить общую стоимость товаров в корзине.
+		 * @return {string} Строка с общей стоимостью товаров.
 		 */
-		getTotalBasketPrice() {
+		getTotalPriceInBasket() {
 			let totalPrice = 0;
-			this.basketGoods.forEach(basketProduct => {
-				totalPrice += basketProduct.price;
+			this.basketGoods.forEach(product => {
+				totalPrice += product.price * product.quantity;
 			})
 			return `Общая стоимость товаров в корзине: ${totalPrice}`;
-		},	
+		},
+
 
 		/**
 		 * Отфильтровать массив товаров по переданному значению в searchLine.
@@ -59,20 +60,21 @@ const app = new Vue({
 		 * Добавить товар в корзину.
 		 */
 		addProductInBasket(event) {
-			/*let isExists = false;*/
-			const newProduct = this.getProductById(+event.target.name);
-			this.basketGoods.push(newProduct);
-			/*this.basketGoods.forEach(productBasket => {
-				if (productBasket.id_product === newProduct.id_product) {
-					productBasket.quantity += 1;
-					isExists = true;
-				}
-			})
-			if (!isExists) {
-				newProduct.quantity = 0;
-				this.basketGoods.push(newProduct);
-			console.log(newProduct);
-			}	*/
+			const currentProduct = this.getProductById(+event.target.name, this.filteredGoods);
+			let isExists = this.checkIfExistsInBasket(currentProduct);
+			if (isExists) {
+				const basketProduct = this.getProductById(+event.target.name, this.basketGoods);
+				basketProduct.quantity++;
+			}else {
+				const basketProduct = {...currentProduct};
+				basketProduct.quantity = 1;
+				this.basketGoods.push(basketProduct);
+			}
+		},
+
+		checkIfExistsInBasket(product) {
+			/*return this.basketGoods.includes(product);*/
+			return Boolean(this.basketGoods.find(item => item.id_product == product.id_product));
 		},
 
 		/**
@@ -80,25 +82,33 @@ const app = new Vue({
 		 * @param  {integer} productId id товара.
 		 * @return {object} Объект товара.
 		 */
-		getProductById(productId) {
-			return this.filteredGoods.find(product => product.id_product == productId);
-		},
-
-		/**
-		 * Получить объект товара в корзине по id.
-		 * @param  {integer} productId id товара в корзине.
-		 * @return {object} Объект товара в корзине.
-		 */
-		getBasketProductById(productId) {
-			return this.basketGoods.find(product => product.id_product == productId);
+		getProductById(productId, array) {
+			return array.find(product => product.id_product == productId);
 		},
 
 		/**
 		 * Удалить товар из корзины.
 		 */
 		removeProductInBasket(event) {
-			const basketItemObj = this.getBasketProductById(+event.target.name);
+			const basketItemObj = this.getProductById(+event.target.name, this.basketGoods);
 			this.basketGoods.splice(this.basketGoods.indexOf(basketItemObj), 1);
+		},
+
+		/**
+		 * Получить общую стоимость на одну позицию элемента корзины.
+		 * @return {string} Строка с общей стоимостью элемента корзины.
+		 */
+		getTotalPriceForItem(product) {
+			return `Цена: ${product.price * product.quantity}`;
+		},
+
+		/**
+		 * Обновить количество товара в корзине.
+		 * @param  {integer} quantity Новое кол-во товара.
+		 */
+		updateQuantity(event) {
+			const currentProduct = this.getProductById(event.target.name, this.basketGoods);
+			currentProduct.quantity = event.target.value;
 		},
 
 		/**

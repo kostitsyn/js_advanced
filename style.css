@@ -16,3 +16,7 @@
 	bottom: -70px;
 	color: #544f41;
 }
+
+.basket-item input {
+	width: 50px;
+}
