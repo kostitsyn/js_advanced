@@ -72,6 +72,11 @@ const app = new Vue({
 			}
 		},
 
+		/**
+		 * Проверить, есть ли уже выбранный продукт в корзине.
+		 * @param  {object} product Объект продукта.
+		 * @return {Boolean}
+		 */
 		checkIfExistsInBasket(product) {
 			/*return this.basketGoods.includes(product);*/
 			return Boolean(this.basketGoods.find(item => item.id_product == product.id_product));
@@ -80,7 +85,7 @@ const app = new Vue({
 		/**
 		 * Получить объект товара по id.
 		 * @param  {integer} productId id товара.
-		 * @return {object} Объект товара.
+		 * @return {object} Массив товаров.
 		 */
 		getProductById(productId, array) {
 			return array.find(product => product.id_product == productId);
@@ -96,6 +101,7 @@ const app = new Vue({
 
 		/**
 		 * Получить общую стоимость на одну позицию элемента корзины.
+		 * @param  {object} product объект продукта в корзине.
 		 * @return {string} Строка с общей стоимостью элемента корзины.
 		 */
 		getTotalPriceForItem(product) {
