@@ -50,11 +50,12 @@
 		          	<li><a href="#" class="nav-link px-2 text-white">Контакты</a></li>
 		        </ul>
 
-		        <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" @submit.prevent="filterGoods">
+		        <!-- <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" @submit.prevent="filterGoods">
 		          <input type="search" class="form-control form-control-dark  border-0 rounded-0 rounded-start search-field" placeholder="Search..." aria-label="Search" v-model="searchLine">
 		          <button type="button" class="btn btn-light border-0 rounded-0 rounded-end bg-white search-btn"><i class="fad fa-search" @click="filterGoods"></i></button>
 		          
-		        </form>
+		        </form> -->
+		        <search-block></search-block>
 
 		        <div class="text-end">
 	        		<button type="button" class="btn btn-warning me-2">Войти</button>
@@ -96,27 +97,12 @@
 	  	</header>
 	  	<div class='container px-4 mt-3 main-container'>
 			<main>
-				<div class="goods-list row-cols-lg-5 d-flex justify-content-center mb-5 flex-wrap" v-if="filteredGoods.length">
-					<div class='goods-item p-3 bg-light border-warning mx-3 animated' v-for="product in filteredGoods" @mouseover="mouseOver" @mouseout="mouseOut">
-						<h3 class='goods-name'>{{ product.product_name }}</h3>
-						<p class='goods-price'>{{ product.price }}</p>
-						<button v-bind:name="product.id_product" class="btn btn-danger btn-sm add-basket-btn" @click="addProductInBasket">В корзину</button>
-					</div>
-					<p class="goods-total-price">{{ getTotalPrice() }}</p>
-				</div>
-				<h3 class="text-center" v-else="filteredGoods.length">Нет данных</h3>
+				<goods-list :goods="filteredGoods" v-if="filteredGoods.length"></goods-list>
+				<h3 class="text-center" v-else>Нет данных</h3>
 
 				<div v-if="basketGoods.length">
 					<h2 class="text-center">Товары в корзине</h2>
-					<div class="basket-list row-cols-lg-5 d-flex justify-content-center flex-wrap">
-						<div class='basket-item p-3 bg-light border-warning mx-3 animated' v-for="product in basketGoods" @mouseover="mouseOver" @mouseout="mouseOut">
-							<h3 class='goods-name'>{{ product.product_name }}</h3>
-							<p class='goods-price'>{{ getTotalPriceForItem(product) }}</p>
-							<p class='basket-product-quantity'>Количество:</p>
-							<input class="mb-3 d-block" v-bind:name="product.id_product" type="number" v-bind:value="product.quantity" @change="updateQuantity">
-							<button v-bind:name="product.id_product" class="btn btn-danger btn-sm remove-basket-btn" @click="removeProductInBasket">Удалить</button>
-						</div>
-					</div>
+					<basket-list :basket-arr="basketGoods"></basket-list>
 					<p class="position-static goods-total-price text-center">{{ getTotalPriceInBasket() }}</p>
 				</div>
 			</main>
