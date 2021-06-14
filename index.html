@@ -50,12 +50,7 @@
 		          	<li><a href="#" class="nav-link px-2 text-white">Контакты</a></li>
 		        </ul>
 
-		        <!-- <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" @submit.prevent="filterGoods">
-		          <input type="search" class="form-control form-control-dark  border-0 rounded-0 rounded-start search-field" placeholder="Search..." aria-label="Search" v-model="searchLine">
-		          <button type="button" class="btn btn-light border-0 rounded-0 rounded-end bg-white search-btn"><i class="fad fa-search" @click="filterGoods"></i></button>
-		          
-		        </form> -->
-		        <search-block></search-block>
+		        <search-block @start-search="filterGoods" v-model="searchLine"></search-block>
 
 		        <div class="text-end">
 	        		<button type="button" class="btn btn-warning me-2">Войти</button>
@@ -75,16 +70,7 @@
 			        <h5 class="modal-title" id="staticBackdropLabel">Корзина</h5>
 			        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 			      </div>
-			      <div class="modal-body basket-list" v-for="product in basketGoods">
-			      	<div class='basket-item'>
-						<h3 class='basket-product-name'>{{ product.product_name }}</h3>
-						<p class='basket-product-price'>{{ getTotalPriceForItem(product) }}</p>
-						<p class='basket-product-quantity'>Количество:</p>
-						<input v-bind:name="product.id_product" type="number" v-bind:value="product.quantity" @change="updateQuantity"><br><br>
-						<button v-bind:name=product.id_product class="btn btn-danger btn-sm remove-basket-btn" @click="removeProductInBasket">Удалить</button>
-					</div>
-			      </div>
-			      <p class="basket-total-price">{{ getTotalPriceInBasket() }}</p>
+			      <basket-list :get-price="getTotalPriceForItem" :get-total-price="getTotalPriceInBasket" :basket-arr="basketGoods"></basket-list>
 			      <div class="modal-footer">
 			        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
 			      </div>
@@ -93,18 +79,19 @@
 			</div>
 
 		    <!-- Modal -->
-
 	  	</header>
 	  	<div class='container px-4 mt-3 main-container'>
 			<main>
-				<goods-list :goods="filteredGoods" v-if="filteredGoods.length"></goods-list>
-				<h3 class="text-center" v-else>Нет данных</h3>
+				<div v-if="isServerRespond">
+					<goods-list v-else :goods="filteredGoods" v-if="filteredGoods.length"></goods-list>
+					<h3 class="text-center" v-else>Нет данных</h3>
 
-				<div v-if="basketGoods.length">
-					<h2 class="text-center">Товары в корзине</h2>
-					<basket-list :basket-arr="basketGoods"></basket-list>
-					<p class="position-static goods-total-price text-center">{{ getTotalPriceInBasket() }}</p>
+					<div v-if="basketGoods.length">
+						<h2 class="text-center">Товары в корзине</h2>
+						<basket-list :get-price="getTotalPriceForItem" :get-total-price="getTotalPriceInBasket" :basket-arr="basketGoods"></basket-list>
+					</div>
 				</div>
+				<bad-response-server v-else></bad-response-server>
 			</main>
 		</div>
 	</div>

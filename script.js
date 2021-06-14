@@ -10,43 +10,78 @@ Vue.component('goods-list', {
 
 Vue.component('goods-item', {
 	props: ['product'],
-	template: `<div class="goods-item" @click="$emit('lorem-ipsum', $event)">
+	template: `<div class="goods-item p-3 bg-light border-warning mx-3 animated" @mouseover="mouseOver($event)"
+			   @mouseout="mouseOut($event)">
 			       <h3 class='goods-name'>{{ product.product_name }}</h3>
 				   <p class='goods-price'>{{ product.price }}</p>
-				   <button :name="product.id_product" class="btn btn-danger btn-sm add-basket-btn" @click="clickHandler($event)">В корзину</button>
+				   <button :name="product.id_product" class="btn btn-danger btn-sm add-basket-btn" 
+				   @click="addProductInBasket($event)">В корзину</button>
 		       </div>`,
 	methods: {
-		clickHandler(event) {
+		addProductInBasket(event) {
 			bus.$emit('add-basket-product', event);
+		},
+		mouseOver(event) {
+			bus.$emit('add-animate', event);
+		},
+		mouseOut(event) {
+			bus.$emit('remove-animate', event);
 		}
 	}
 });
 
 Vue.component('search-block', {
 	props: ['searchLine'],
-	template: `<form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" @submit.prevent="filterGoods">
-		          <input type="search" class="form-control form-control-dark  border-0 rounded-0 rounded-start search-field" placeholder="Search..." aria-label="Search" v-model="searchLine">
-		          <button type="button" class="btn btn-light border-0 rounded-0 rounded-end bg-white search-btn"><i class="fad fa-search"></i></button>
-		          
+	template: `<form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" @submit.prevent="$emit('start-search')">
+		          <input type="search" class="form-control form-control-dark  border-0 rounded-0 rounded-start search-field"
+		           placeholder="Search..." aria-label="Search" :value="searchLine"
+		           v-on:input="$emit('input', $event.target.value)">
+		          <button type="button" class="btn btn-light border-0 rounded-0 rounded-end bg-white search-btn">
+		          	<i class="fad fa-search" @click="$emit('start-search')"></i>
+		          </button>
 		        </form>`,
 });
 
 Vue.component('basket-list', {
-	props: ['basketArr'],
-	template: `<div class="basket-list row-cols-lg-5 d-flex justify-content-center flex-wrap">
-			       <basket-item v-for="baksetItem in basketArr" :product="basketItem"></basket-item>
-			   </div>`,
+	props: ['basketArr', 'getPrice', 'getTotalPrice'],
+	template:  `<div>
+					<div class="basket-list row-cols-lg-5 d-flex justify-content-center flex-wrap">
+				       <basket-item v-for="basketItem in basketArr" :get-price="getPrice" :product="basketItem"></basket-item>
+				    </div>
+				    <p class="position-static goods-total-price text-center">{{ getTotalPrice() }}</p>
+				</div>`,
 });
 
 Vue.component('basket-item', {
-	props: ['product'],
-	template: `<div class='basket-item p-3 bg-light border-warning mx-3 animated' @mouseover="mouseOver" @mouseout="mouseOut">
+	props: ['product', 'getPrice'],
+	template: `<div class='basket-item p-3 bg-light border-warning mx-3 animated' @mouseover="mouseOver($event)" 
+			   @mouseout="mouseOut($event)">
 			       <h3 class='goods-name'>{{ product.product_name }}</h3>
-				   <p class='goods-price'>{{ getTotalPriceForItem(product) }}</p>
+				   <p class='goods-price'>{{ getPrice(product) }}</p>
 				   <p class='basket-product-quantity'>Количество:</p>
-				   <input class="mb-3 d-block" v-bind:name="product.id_product" type="number" v-bind:value="product.quantity" @change="updateQuantity">
-				   <button v-bind:name="product.id_product" class="btn btn-danger btn-sm remove-basket-btn" @click="removeProductInBasket">Удалить</button>product
-			   </div>`
+				   <input class="mb-3 d-block" v-bind:name="product.id_product" type="number" 
+				   v-bind:value="product.quantity" @change="updateQuantity($event)">
+				   <button v-bind:name="product.id_product" class="btn btn-danger btn-sm remove-basket-btn" 
+				   @click="removeProductInBasket($event)">Удалить</button>
+			   </div>`,
+	methods: {
+		removeProductInBasket(event) {
+			bus.$emit('remove-basket-product', event);
+		},
+		updateQuantity(event) {
+			bus.$emit('update-quantity-product', event);
+		},
+		mouseOver(event) {
+			bus.$emit('add-animate', event);
+		},
+		mouseOut(event) {
+			bus.$emit('remove-animate', event);
+		},
+	}		   
+});
+
+Vue.component('bad-response-server', {
+	template: `<h1 class="text-center text-danger">Ошибка соединения с сервером!!!</h1>`
 })
 
 const app = new Vue({
@@ -55,7 +90,8 @@ const app = new Vue({
 		goods: [],
 		filteredGoods: [],
 		searchLine: '',
-		basketGoods: []
+		basketGoods: [],
+		isServerRespond: null
 
 	},
 	methods: {
@@ -65,12 +101,14 @@ const app = new Vue({
 		async fetchGoods() {
 			const API_URL = 'https://raw.githubusercontent.com/GeekBrainsTutorial/online-store-api/master/responses/';
 			const response = await fetch(`${API_URL}/catalogData.json`);
+
 			if (response.ok) {
 				const catalogItems = await response.json();
 				this.goods = catalogItems;
 				this.filteredGoods = catalogItems;
+				this.isServerRespond = true;
 			} else {
-				alert('Ошибка соединения с сервером');
+				this.isServerRespond = false;
 			}
 		},
 
@@ -155,7 +193,7 @@ const app = new Vue({
 		 * @return {string} Строка с общей стоимостью элемента корзины.
 		 */
 		getTotalPriceForItem(product) {
-			return `Цена: ${product.price * product.quantity}`;
+			return `Цена: ${product.price * +product.quantity}`;
 		},
 
 		/**
@@ -165,6 +203,11 @@ const app = new Vue({
 		updateQuantity(event) {
 			const currentProduct = this.getProductById(event.target.name, this.basketGoods);
 			currentProduct.quantity = event.target.value;
+			if (event.target.value <= 0) {
+				this.removeProductInBasket(event);
+				let basketItemElem = event.target.parentNode;
+				basketItemElem.style.display = 'none';
+			}
 		},
 
 		/**
@@ -185,6 +228,12 @@ const app = new Vue({
 	async mounted() {
 		await this.fetchGoods();
 		bus.$on('add-basket-product', this.addProductInBasket);
+		bus.$on('add-animate', this.mouseOver);
+		bus.$on('remove-animate', this.mouseOut);
+		bus.$on('remove-basket-product', this.removeProductInBasket);
+		bus.$on('update-quantity-product', this.updateQuantity);
+		bus.$on('get-total-price-for-item', this.getTotalPriceForItem);
+		bus.$on('search-click-enter', this.filterGoods);
 	}, 
 });
 
