@@ -115,6 +115,11 @@ const app = new Vue({
 		updateQuantity(event) {
 			const currentProduct = this.getProductById(event.target.name, this.basketGoods);
 			currentProduct.quantity = event.target.value;
+			if (event.target.value <= 0) {
+				this.removeProductInBasket(event);
+				let basketItemElem = event.target.parentNode;
+				basketItemElem.style.display = 'none';
+			}
 		},
 
 		/**
