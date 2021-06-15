@@ -81,7 +81,7 @@ Vue.component('basket-item', {
 });
 
 Vue.component('bad-response-server', {
-	template: `<h1 class="text-center text-danger">Ошибка соединения с сервером!!!</h1>`
+	template: `<h1 class="text-center text-danger animated zoomInDown">Ошибка соединения с сервером!!!</h1>`
 })
 
 const app = new Vue({
@@ -99,7 +99,7 @@ const app = new Vue({
 		 * Получить данные о товарах с сервера
 		 */
 		async fetchGoods() {
-			const API_URL = 'https://raw.githubusercontent.com/GeekBrainsTutorial/online-store-api/master/responses/';
+			const API_URL = 'https://raw.githubusercontent.com/GeekBrainsTutoria/online-store-api/master/responses/';
 			const response = await fetch(`${API_URL}/catalogData.json`);
 
 			if (response.ok) {
