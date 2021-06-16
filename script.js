@@ -91,6 +91,7 @@ const app = new Vue({
 		filteredGoods: [],
 		searchLine: '',
 		basketGoods: [],
+		API_URL: 'http://localhost:3000',
 		isServerRespond: null
 
 	},
@@ -99,8 +100,7 @@ const app = new Vue({
 		 * Получить данные о товарах с сервера
 		 */
 		async fetchGoods() {
-			const API_URL = 'https://raw.githubusercontent.com/GeekBrainsTutorial/online-store-api/master/responses/';
-			const response = await fetch(`${API_URL}/catalogData.json`);
+			const response = await fetch(`${this.API_URL}/catalogData`);
 
 			if (response.ok) {
 				const catalogItems = await response.json();
@@ -148,8 +148,26 @@ const app = new Vue({
 		/**
 		 * Добавить товар в корзину.
 		 */
-		addProductInBasket(event) {
+		async addProductInBasket(event) {
 			const currentProduct = this.getProductById(+event.target.name, this.filteredGoods);
+			let isExists = this.checkIfExistsInBasket(currentProduct);
+			let basketProduct;
+			if (isExists) {
+				basketProduct = this.getProductById(+event.target.name, this.basketGoods);
+				basketProduct.quantity++;
+			}else {
+				basketProduct = {...currentProduct, quantity: 1};
+			}
+
+			const response = await fetch(`${this.API_URL}/addToBasket`, {
+				method: 'POST',
+				mode: 'cors',
+				headers: {
+					'Content-type': 'application/json;charset=utf-8'
+				},
+				body: JSON.stringify(basketProduct)
+			});
+			/*const currentProduct = this.getProductById(+event.target.name, this.filteredGoods);
 			let isExists = this.checkIfExistsInBasket(currentProduct);
 			if (isExists) {
 				const basketProduct = this.getProductById(+event.target.name, this.basketGoods);
@@ -157,7 +175,7 @@ const app = new Vue({
 			}else {
 				const basketProduct = {...currentProduct, quantity: 1};
 				this.basketGoods.push(basketProduct);
-			}
+			}*/
 		},
 
 		/**
