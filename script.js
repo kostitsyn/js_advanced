@@ -179,7 +179,8 @@ const app = new Vue({
 				productName: event.target.parentNode.querySelector('.goods-name').innerText,
 			}
 
-			await this.sendPostRequest('static', JSON.stringify(bodyRequestStatic));
+			await this.sendGetRequest('static', bodyRequestStatic);
+			
 
 			this.updateBasketArr();
 		},
@@ -221,7 +222,8 @@ const app = new Vue({
 				productName: event.target.parentNode.querySelector('.goods-name').innerText,
 			}
 
-			await this.sendPostRequest('static', JSON.stringify(bodyRequestStatic));
+			/*await this.sendPostRequest('static', JSON.stringify(bodyRequestStatic));*/
+			await this.sendGetRequest('static', bodyRequestStatic);
 
 			this.updateBasketArr();
 		},
@@ -288,6 +290,18 @@ const app = new Vue({
 				},
 				body: bodyRequest
 			});
+		},
+
+
+		/**
+		 * Отправить GET запрос с параметрами.
+		 * @param  {string} route       Роут на который отправляется запрос.
+		 * @param  {string} bodyRequest JSON строка с данными запроса.
+		 */
+		async sendGetRequest(route, bodyRequest) {
+			let url = new URL(`${this.API_URL}/${route}`);
+			url.search = new URLSearchParams(bodyRequest);
+			const response = await fetch(url);
 		}
 	},
 

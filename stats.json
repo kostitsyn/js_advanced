@@ -2,26 +2,16 @@
   {
     "action": "add",
     "productName": "Мышка",
-    "date": "June 17th 2021, 4:05:56 pm"
+    "date": "June 17th 2021, 6:51:09 pm"
   },
   {
     "action": "add",
-    "productName": "Кресло",
-    "date": "June 17th 2021, 4:06:02 pm"
+    "productName": "Колонки",
+    "date": "June 17th 2021, 6:51:10 pm"
   },
   {
     "action": "remove",
     "productName": "Мышка",
-    "date": "June 17th 2021, 4:06:11 pm"
-  },
-  {
-    "action": "remove",
-    "productName": "Ноутбук",
-    "date": "June 17th 2021, 4:06:14 pm"
-  },
-  {
-    "action": "remove",
-    "productName": "Кресло",
-    "date": "June 17th 2021, 4:06:27 pm"
+    "date": "June 17th 2021, 6:51:13 pm"
   }
 ]

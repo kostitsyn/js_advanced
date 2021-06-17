@@ -10,19 +10,22 @@ app.use(bodyParser.json());
 app.use(express.static('.'));
 app.use(cors());
 
+// API GET-запроса на получение товаров.
 app.get('/catalogData', (req, res) => {
 	fs.readFile('catalog.json', 'utf-8', (err, data) => {
 		res.send(data);
 	});
 });
 
+// API GET-запроса на получение товаров в корзине.
 app.get('/basketData', (req, res) => {
 	fs.readFile('basket.json', 'utf-8', (err, data) => {
 		res.send(data);
 	});
 });
 
-app.post('/static', (req, res) => {
+// API POST-запроса на сохранение статистических данных.
+/*app.post('/static', (req, res) => {
 	fs.readFile('stats.json', 'utf-8', (err, data) => {
 		if (err) {
 			res.send('{"result": 0}');
@@ -40,8 +43,30 @@ app.post('/static', (req, res) => {
 			});
 		}
 	});
+});*/
+
+// API GET-запроса на сохранение статистических данных.
+app.get('/static', (req, res) => {
+	fs.readFile('stats.json', 'utf-8', (err, data) => {
+		if (err) {
+			res.send('{"result": 0}');
+		} else {
+			let statArr = JSON.parse(data);
+			let statItem = req.query;
+			statItem.date = moment().format('MMMM Do YYYY, h:mm:ss a');
+			statArr.push(statItem);
+			fs.writeFile('stats.json', JSON.stringify(statArr, null, 2), err => {
+				if (err) {
+					res.send('{"result": 0}');
+				} else {
+					res.send('{"result": 1}');
+				}
+			});
+		}
+	});
 });
 
+// API POST-запроса на добавление товара в корзину.
 app.post('/addToBasket', (req, res) => {
 	fs.readFile('catalog.json', 'utf-8', (err, data) => {
 		if (err) {
@@ -80,6 +105,7 @@ app.post('/addToBasket', (req, res) => {
 	});
 });
 
+// API POST-запроса на удаление товара из корзины.
 app.post('/removeToBasket', (req, res) => {
 	fs.readFile('basket.json', 'utf-8', (err, data) => {
 		if (err) {
@@ -101,8 +127,7 @@ app.post('/removeToBasket', (req, res) => {
 	});
 });
 
-
-
+// Устанавливаем номер порта сервера.
 app.listen(portNumber, () => {
 	console.log(`Server is running on port ${portNumber}!!!`)
 });
