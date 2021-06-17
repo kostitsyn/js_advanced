@@ -1,0 +1,17 @@
+[
+  {
+    "action": "add",
+    "productName": "Мышка",
+    "date": "June 17th 2021, 6:51:09 pm"
+  },
+  {
+    "action": "add",
+    "productName": "Колонки",
+    "date": "June 17th 2021, 6:51:10 pm"
+  },
+  {
+    "action": "remove",
+    "productName": "Мышка",
+    "date": "June 17th 2021, 6:51:13 pm"
+  }
+]
