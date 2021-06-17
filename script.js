@@ -14,7 +14,7 @@ Vue.component('goods-item', {
 			   @mouseout="mouseOut($event)">
 			       <h3 class='goods-name'>{{ product.product_name }}</h3>
 				   <p class='goods-price'>{{ product.price }}</p>
-				   <button :name="product.id_product" class="btn btn-danger btn-sm add-basket-btn" 
+				   <button :name="product.id" class="btn btn-danger btn-sm add-basket-btn" 
 				   @click="addProductInBasket($event)">В корзину</button>
 		       </div>`,
 	methods: {
@@ -59,9 +59,9 @@ Vue.component('basket-item', {
 			       <h3 class='goods-name'>{{ product.product_name }}</h3>
 				   <p class='goods-price'>{{ getPrice(product) }}</p>
 				   <p class='basket-product-quantity'>Количество:</p>
-				   <input class="mb-3 d-block" v-bind:name="product.id_product" type="number" 
+				   <input class="mb-3 d-block" v-bind:name="product.id" type="number" 
 				   v-bind:value="product.quantity" @change="updateQuantity($event)">
-				   <button v-bind:name="product.id_product" class="btn btn-danger btn-sm remove-basket-btn" 
+				   <button v-bind:name="product.id" class="btn btn-danger btn-sm remove-basket-btn" 
 				   @click="removeProductInBasket($event)">Удалить</button>
 			   </div>`,
 	methods: {
@@ -112,6 +112,23 @@ const app = new Vue({
 			}
 		},
 
+
+		/**
+		 * Обновить список товаров в корзине.
+		 */
+		async updateBasketArr() {
+			const response = await fetch(`${this.API_URL}/basketData`);
+
+			if (response.ok) {
+				const basketItems = await response.json();
+				this.basketGoods = basketItems;
+				this.isServerRespond = true;
+			} else {
+				this.isServerRespond = false;
+			}
+		},
+
+
 		/**
 		 * Вычислить общую стоимость товаров.
 		 * @return {string} Строка с общей стоимостью товаров.
@@ -123,6 +140,7 @@ const app = new Vue({
 			})
 			return `Общая стоимость товаров: ${totalPrice}`;
 		},
+
 
 		/**
 		 * Вычислить общую стоимость товаров в корзине.
@@ -145,38 +163,27 @@ const app = new Vue({
 			this.filteredGoods = this.goods.filter(product => regexp.test(product.product_name));
 		},
 
+
 		/**
 		 * Добавить товар в корзину.
 		 */
 		async addProductInBasket(event) {
-			const currentProduct = this.getProductById(+event.target.name, this.filteredGoods);
-			let isExists = this.checkIfExistsInBasket(currentProduct);
-			let basketProduct;
-			if (isExists) {
-				basketProduct = this.getProductById(+event.target.name, this.basketGoods);
-				basketProduct.quantity++;
-			}else {
-				basketProduct = {...currentProduct, quantity: 1};
+
+			const bodyRequest = {
+				id: +event.target.name,
+			};
+			await this.sendPostRequest('addToBasket', JSON.stringify(bodyRequest));
+
+			const bodyRequestStatic = {
+				action: 'add',
+				productName: event.target.parentNode.querySelector('.goods-name').innerText,
 			}
 
-			const response = await fetch(`${this.API_URL}/addToBasket`, {
-				method: 'POST',
-				mode: 'cors',
-				headers: {
-					'Content-type': 'application/json;charset=utf-8'
-				},
-				body: JSON.stringify(basketProduct)
-			});
-			/*const currentProduct = this.getProductById(+event.target.name, this.filteredGoods);
-			let isExists = this.checkIfExistsInBasket(currentProduct);
-			if (isExists) {
-				const basketProduct = this.getProductById(+event.target.name, this.basketGoods);
-				basketProduct.quantity++;
-			}else {
-				const basketProduct = {...currentProduct, quantity: 1};
-				this.basketGoods.push(basketProduct);
-			}*/
+			await this.sendPostRequest('static', JSON.stringify(bodyRequestStatic));
+
+			this.updateBasketArr();
 		},
+
 
 		/**
 		 * Проверить, есть ли уже выбранный продукт в корзине.
@@ -185,8 +192,9 @@ const app = new Vue({
 		 */
 		checkIfExistsInBasket(product) {
 			/*return this.basketGoods.includes(product);*/
-			return Boolean(this.basketGoods.find(item => item.id_product == product.id_product));
+			return Boolean(this.basketGoods.find(item => item.id == product.id));
 		},
+
 
 		/**
 		 * Получить объект товара по id.
@@ -194,16 +202,30 @@ const app = new Vue({
 		 * @return {object} Массив товаров.
 		 */
 		getProductById(productId, array) {
-			return array.find(product => product.id_product == productId);
+			return array.find(product => product.id == productId);
 		},
+
 
 		/**
 		 * Удалить товар из корзины.
 		 */
-		removeProductInBasket(event) {
-			const basketItemObj = this.getProductById(+event.target.name, this.basketGoods);
-			this.basketGoods.splice(this.basketGoods.indexOf(basketItemObj), 1);
+		async removeProductInBasket(event) {
+			
+			const bodyRequest = {
+				id: +event.target.name,
+			};
+			await this.sendPostRequest('removeToBasket', JSON.stringify(bodyRequest));
+
+			const bodyRequestStatic = {
+				action: 'remove',
+				productName: event.target.parentNode.querySelector('.goods-name').innerText,
+			}
+
+			await this.sendPostRequest('static', JSON.stringify(bodyRequestStatic));
+
+			this.updateBasketArr();
 		},
+
 
 		/**
 		 * Получить общую стоимость на одну позицию элемента корзины.
@@ -214,19 +236,28 @@ const app = new Vue({
 			return `Цена: ${product.price * +product.quantity}`;
 		},
 
+
 		/**
 		 * Обновить количество товара в корзине.
 		 * @param  {integer} quantity Новое кол-во товара.
 		 */
-		updateQuantity(event) {
-			const currentProduct = this.getProductById(event.target.name, this.basketGoods);
-			currentProduct.quantity = event.target.value;
+		async updateQuantity(event) {
+			const bodyRequest = {
+				id: +event.target.name,
+			    quantity: +event.target.value
+			};
+
+			await this.sendPostRequest('addToBasket', JSON.stringify(bodyRequest));
+
 			if (event.target.value <= 0) {
-				this.removeProductInBasket(event);
-				let basketItemElem = event.target.parentNode;
-				basketItemElem.style.display = 'none';
+				const bodyRequest = {
+					id: event.target.name
+				};
+				await this.sendPostRequest('removeToBasket', JSON.stringify(bodyRequest));
 			}
+			this.updateBasketArr();
 		},
+
 
 		/**
 		 * Добавляет анимацию на элемент при наведении.
@@ -241,10 +272,28 @@ const app = new Vue({
 		mouseOut(event) {
 			event.target.classList.remove('pulse');
 		},
+
+
+		/**
+		 * Отправить POST запрос.
+		 * @param  {string} route       Роут на который отправляется запрос.
+		 * @param  {string} bodyRequest JSON строка с данными запроса.
+		 */
+		async sendPostRequest(route, bodyRequest) {
+			const response = await fetch(`${this.API_URL}/${route}`, {
+				method: 'POST',
+				mode: 'cors',
+				headers: {
+					'Content-type': 'application/json;charset=utf-8'
+				},
+				body: bodyRequest
+			});
+		}
 	},
 
 	async mounted() {
 		await this.fetchGoods();
+		await this.updateBasketArr();
 		bus.$on('add-basket-product', this.addProductInBasket);
 		bus.$on('add-animate', this.mouseOver);
 		bus.$on('remove-animate', this.mouseOut);
