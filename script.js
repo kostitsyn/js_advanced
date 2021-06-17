@@ -179,6 +179,7 @@ const app = new Vue({
 				productName: event.target.parentNode.querySelector('.goods-name').innerText,
 			}
 
+			/*await this.sendPostRequest('static', JSON.stringify(bodyRequestStatic));*/
 			await this.sendGetRequest('static', bodyRequestStatic);
 			
 
