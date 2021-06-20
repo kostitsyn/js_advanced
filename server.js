@@ -1,10 +1,15 @@
 const portNumber = 3000;
-const express = require('express');
+/*const express = require('express');*/
+import express from 'express';
 const app = express();
-const fs = require('fs');
-const cors = require('cors');
-const bodyParser = require('body-parser');
-const moment = require('moment');
+/*const fs = require('fs');*/
+import fs from 'fs';
+/*const cors = require('cors');*/
+import cors from 'cors';
+/*const bodyParser = require('body-parser');*/
+import bodyParser from 'body-parser';
+/*const moment = require('moment');*/
+import moment from 'moment';
 
 app.use(bodyParser.json());
 app.use(express.static('.'));
@@ -99,6 +104,7 @@ app.post('/addToBasket', (req, res) => {
 							res.send('{"result": 1}');
 						}
 					});
+					console.log(basketGoods);
 				}
 			});
 		}
