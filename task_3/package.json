@@ -1,16 +1,14 @@
 {
-  "name": "webpack",
+  "name": "task_3",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "webpack"
+    "test": "jasmine"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "webpack": "^5.39.1",
-    "webpack-cli": "^4.7.2"
-  },
-  "type": "module"
+    "jasmine": "^3.7.0"
+  }
 }

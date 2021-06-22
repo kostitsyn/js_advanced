@@ -70,7 +70,7 @@
 			        <h5 class="modal-title" id="staticBackdropLabel">Корзина</h5>
 			        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 			      </div>
-			      <basket-list :get-price="getTotalPriceForItem" :get-total-price="getTotalPriceInBasket" :basket-arr="basketGoods"></basket-list>
+			      <basket-list :get-price="getTotalPriceForItem" :get-total-price-in-basket="getTotalPriceInBasket" :basket-arr="basketGoods"></basket-list>
 			      <div class="modal-footer">
 			        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
 			      </div>
@@ -83,12 +83,12 @@
 	  	<div class='container px-4 mt-3 main-container'>
 			<main>
 				<div v-if="isServerRespond">
-					<goods-list :goods="filteredGoods" :basket-goods="basketGoods" v-model="basketGoods" v-if="filteredGoods.length"></goods-list>
+					<goods-list :goods="filteredGoods" :get-total-price="getTotalPrice" :basket-goods="basketGoods" v-if="filteredGoods.length"></goods-list>
 					<h3 class="text-center" v-else>Нет данных</h3>
 
 					<div v-if="basketGoods.length">
 						<h2 class="text-center">Товары в корзине</h2>
-						<basket-list :get-price="getTotalPriceForItem" :get-total-price="getTotalPriceInBasket" :basket-arr="basketGoods"></basket-list>
+						<basket-list :get-price="getTotalPriceForItem" :get-total-price-in-basket="getTotalPriceInBasket" :basket-arr="basketGoods"></basket-list>
 					</div>
 				</div>
 				<bad-response-server v-else></bad-response-server>

@@ -1,96 +1,10 @@
 export let bus = new Vue();
-import goodsList from './components/goods_list.js';
-import goodsItem from './components/goods_item.js';
-import searchBlock from './components/search_block.js';
-import basketList from './components/basket_list.js';
-import basketItem from './components/basket_item.js';
-import badResponseServer from './components/bad_response_server.js';
-
-
-
-/*Vue.component('goods-list', {
-	props: ['goods'],
-	template: `<div class="goods-list row-cols-lg-5 d-flex justify-content-center mb-5 flex-wrap">
-			       <goods-item v-for="goodItem in goods" :product="goodItem"></goods-item>
-			   </div>`,
-
-});
-
-Vue.component('goods-item', {
-	props: ['product'],
-	template: `<div class="goods-item p-3 bg-light border-warning mx-3 animated" @mouseover="mouseOver($event)"
-			   @mouseout="mouseOut($event)">
-			       <h3 class='goods-name'>{{ product.product_name }}</h3>
-				   <p class='goods-price'>{{ product.price }}</p>
-				   <button :name="product.id" class="btn btn-danger btn-sm add-basket-btn" 
-				   @click="addProductInBasket($event)">В корзину</button>
-		       </div>`,
-	methods: {
-		addProductInBasket(event) {
-			bus.$emit('add-basket-product', event);
-		},
-		mouseOver(event) {
-			bus.$emit('add-animate', event);
-		},
-		mouseOut(event) {
-			bus.$emit('remove-animate', event);
-		}
-	}
-});
-
-Vue.component('search-block', {
-	props: ['searchLine'],
-	template: `<form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" @submit.prevent="$emit('start-search')">
-		          <input type="search" class="form-control form-control-dark  border-0 rounded-0 rounded-start search-field"
-		           placeholder="Search..." aria-label="Search" :value="searchLine"
-		           v-on:input="$emit('input', $event.target.value)">
-		          <button type="button" class="btn btn-light border-0 rounded-0 rounded-end bg-white search-btn">
-		          	<i class="fad fa-search" @click="$emit('start-search')"></i>
-		          </button>
-		        </form>`,
-});
-
-Vue.component('basket-list', {
-	props: ['basketArr', 'getPrice', 'getTotalPrice'],
-	template:  `<div>
-					<div class="basket-list row-cols-lg-5 d-flex justify-content-center flex-wrap">
-				       <basket-item v-for="basketItem in basketArr" :get-price="getPrice" :product="basketItem"></basket-item>
-				    </div>
-				    <p class="position-static goods-total-price text-center">{{ getTotalPrice() }}</p>
-				</div>`,
-});
-
-Vue.component('basket-item', {
-	props: ['product', 'getPrice'],
-	template: `<div class='basket-item p-3 bg-light border-warning mx-3 animated' @mouseover="mouseOver($event)" 
-			   @mouseout="mouseOut($event)">
-			       <h3 class='goods-name'>{{ product.product_name }}</h3>
-				   <p class='goods-price'>{{ getPrice(product) }}</p>
-				   <p class='basket-product-quantity'>Количество:</p>
-				   <input class="mb-3 d-block" v-bind:name="product.id" type="number" 
-				   v-bind:value="product.quantity" @change="updateQuantity($event)">
-				   <button v-bind:name="product.id" class="btn btn-danger btn-sm remove-basket-btn" 
-				   @click="removeProductInBasket($event)">Удалить</button>
-			   </div>`,
-	methods: {
-		removeProductInBasket(event) {
-			bus.$emit('remove-basket-product', event);
-		},
-		updateQuantity(event) {
-			bus.$emit('update-quantity-product', event);
-		},
-		mouseOver(event) {
-			bus.$emit('add-animate', event);
-		},
-		mouseOut(event) {
-			bus.$emit('remove-animate', event);
-		},
-	}		   
-});
-
-Vue.component('bad-response-server', {
-	template: `<h1 class="text-center text-danger">Ошибка соединения с сервером!!!</h1>`
-});*/
+import {goodsList} from './components/goods_list.js';
+import {goodsItem} from './components/goods_item.js';
+import {searchBlock} from './components/search_block.js';
+import {basketList} from './components/basket_list.js';
+import {basketItem} from './components/basket_item.js';
+import {badResponseServer} from './components/bad_response_server.js';
 
 
 window.onload = () => {
@@ -329,7 +243,3 @@ window.onload = () => {
 		}, 
 	});
 }
-
-/*export default {
-	app:app
-};*/
