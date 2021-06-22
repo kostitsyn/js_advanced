@@ -129,6 +129,7 @@ app.post('/removeToBasket', (req, res) => {
 					res.send('{"result": 1}');
 				}
 			});
+			console.log(basketGoods);
 		};
 	});
 });

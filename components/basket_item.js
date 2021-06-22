@@ -1,3 +1,5 @@
+import {bus} from '../script.js';
+
 export const basketItem = Vue.component('basket-item', {
 	props: ['product', 'getPrice'],
 	template: `<div class='basket-item p-3 bg-light border-warning mx-3 animated' @mouseover="mouseOver($event)" 
@@ -11,23 +13,17 @@ export const basketItem = Vue.component('basket-item', {
 				   @click="removeProductInBasket($event)">Удалить</button>
 			   </div>`,
 	methods: {
-		removeProductInBasket(event) {
-			/*bus.$emit('remove-basket-product', event);*/
-			app.removeProductInBasket(event);
+		async removeProductInBasket(event) {
+			bus.$emit('remove-basket-product', event);
 		},
-		updateQuantity(event) {
-			/*bus.$emit('update-quantity-product', event);*/
-			app.updateQuantity(event);
+		async updateQuantity(event) {
+			bus.$emit('update-quantity-product', event);
 		},
 		mouseOver(event) {
-			/*bus.$emit('add-animate', event);*/
-			/*app.mouseOver(event);*/
-			event.target.classList.add('pulse');
+			bus.$emit('add-animate', event);
 		},
 		mouseOut(event) {
-			/*bus.$emit('remove-animate', event);*/
-			/*app.mouseOut(event);*/
-			event.target.classList.remove('pulse');
+			bus.$emit('remove-animate', event);
 		},
 	}		   
 });

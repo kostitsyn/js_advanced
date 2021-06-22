@@ -1,3 +1,5 @@
+import {bus} from '../script.js';
+
 export const goodsItem = Vue.component('goods-item', {
 	props: ['product', 'basketGoods'],
 	template: `<div class="goods-item p-3 bg-light border-warning mx-3 animated" @mouseover="mouseOver($event)"
@@ -14,40 +16,15 @@ export const goodsItem = Vue.component('goods-item', {
 	},
 	methods: {
 		async addProductInBasket(event) {
-			/*bus.$emit('add-basket-product', event);*/
-			/*app.addProductInBasket(event);*/
-			const bodyRequest = {
-					id: +event.target.name,
-				};
-			const response = await fetch(`${'http://localhost:3000'}/${'addToBasket'}`, {
-				method: 'POST',
-				mode: 'cors',
-				headers: {
-					'Content-type': 'application/json;charset=utf-8'
-				},
-				body: JSON.stringify(bodyRequest)
-			});
-			const response1 = await fetch('http://localhost:3000/basketData');
-
-			if (response1.ok) {
-				const basketItems = await response1.json();
-				app.BasketGoods = basketItems;
-				this.isServerRespond = true;
-			} else {
-				this.isServerRespond = false;
-			}
-			
+			bus.$emit('add-basket-product', event);
 		},
 		mouseOver(event) {
-			/*bus.$emit('add-animate', event);*/
-			/*app.mouseOver(event);*/
-			event.target.classList.add('pulse');
+			bus.$emit('add-animate', event);
+
 
 		},
 		mouseOut(event) {
-			/*bus.$emit('remove-animate', event);*/
-			/*app.mouseOut(event);*/
-			event.target.classList.remove('pulse');
+			bus.$emit('remove-animate', event);
 		}
 	}
 });

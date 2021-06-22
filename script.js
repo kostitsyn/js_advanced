@@ -1,10 +1,10 @@
-/*let bus = new Vue({});*/
-import {goodsList} from './components/goods_list.js';
-import {goodsItem} from './components/goods_item.js';
-import {searchBlock} from './components/search_block.js';
-import {basketList} from './components/basket_list.js';
-import {basketItem} from './components/basket_item.js';
-import {badResponseServer} from './components/bad_response_server.js';
+export let bus = new Vue();
+import goodsList from './components/goods_list.js';
+import goodsItem from './components/goods_item.js';
+import searchBlock from './components/search_block.js';
+import basketList from './components/basket_list.js';
+import basketItem from './components/basket_item.js';
+import badResponseServer from './components/bad_response_server.js';
 
 
 
@@ -313,19 +313,23 @@ window.onload = () => {
 				let url = new URL(`${this.API_URL}/${route}`);
 				url.search = new URLSearchParams(bodyRequest);
 				const response = await fetch(url);
-			}
+			},
 		},
 
 		async mounted() {
 			await this.fetchGoods();
 			await this.updateBasketArr();
-			/*bus.$on('add-basket-product', this.addProductInBasket);
+			bus.$on('add-basket-product', this.addProductInBasket);
 			bus.$on('add-animate', this.mouseOver);
 			bus.$on('remove-animate', this.mouseOut);
 			bus.$on('remove-basket-product', this.removeProductInBasket);
 			bus.$on('update-quantity-product', this.updateQuantity);
 			bus.$on('get-total-price-for-item', this.getTotalPriceForItem);
-			bus.$on('search-click-enter', this.filterGoods);*/
+			bus.$on('search-click-enter', this.filterGoods);
 		}, 
 	});
 }
+
+/*export default {
+	app:app
+};*/

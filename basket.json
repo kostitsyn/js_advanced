@@ -1,20 +1,8 @@
 [
   {
-    "id": 5,
-    "product_name": "Ноутбук",
-    "price": 400,
-    "quantity": 6
-  },
-  {
-    "id": 6,
-    "product_name": "Коврик",
-    "price": 150,
-    "quantity": 1
-  },
-  {
     "id": 7,
     "product_name": "Кресло",
     "price": 160,
-    "quantity": 3
+    "quantity": 12
   }
 ]
