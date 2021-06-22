@@ -22,11 +22,5 @@
     "product_name": "Колонки",
     "price": 130,
     "quantity": 1
-  },
-  {
-    "id": 2,
-    "product_name": "Клавиатура",
-    "price": 200,
-    "quantity": 1
   }
 ]

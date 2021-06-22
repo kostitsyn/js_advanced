@@ -43,5 +43,10 @@
     "action": "add",
     "productName": "Клавиатура",
     "date": "June 22nd 2021, 7:10:10 pm"
+  },
+  {
+    "action": "remove",
+    "productName": "Клавиатура",
+    "date": "June 22nd 2021, 7:13:21 pm"
   }
 ]
