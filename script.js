@@ -82,7 +82,7 @@ Vue.component('basket-item', {
 });
 
 Vue.component('bad-response-server', {
-	template: `<h1 class="text-center text-danger">Ошибка соединения с сервером!!!</h1>`
+	template: `<h1 class="text-center text-danger animated zoomInDown">Ошибка соединения с сервером!!!</h1>`
 })
 
 const app = new Vue({
